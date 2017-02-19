@@ -12,6 +12,7 @@ class WonderBot:
     def __init__(self, login_file, subreddit_name):
         self.new_post_limit = 10
         self.bot_name = 'Tony Wonder'
+        self.bot_account = '__WonderBot__'
         self.reddit = self.get_reddit_session(login_file)
         self.subreddit = self.get_subreddit_session(subreddit_name)
 
@@ -54,30 +55,47 @@ class WonderBot:
     def get_new_posts(self):
         '''Returns new posts for specified subreddit
         Args:
-            self
+            None
         Returns:
             Generator of new posts for subreddit
         '''
-        new_posts = self.subreddit.new(limit=self.new_post_limit)
-        return new_posts
+        newest_posts = self.subreddit.new(limit=self.new_post_limit)
+
+        posts = list()
+        for submission in newest_posts:
+            post_dict = {"text": submission.selftext, "title": submission.title, \
+                         "id": submission.id, "subreddit_id": submission.subreddit_id}
+            posts.append(post_dict)
+
+        return posts
+
+    def get_comments_from_post(self, post_id):
+        '''Returns all comments from post.
+        Args:
+            post_id (string): String of the post id.
+        Returns:
+            list: Comments from post
+        '''
+        post = self.reddit.submission(id=post_id)
+        all_comments = post.comments.list()
+        return all_comments
+
 
 
 if __name__ == '__main__':
 
-# reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name='wondertest')
+    reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name='wondertest')
 
-reddit_bot = WonderBot(login_file=LOGIN_FILE, \
-                       subreddit_name='arresteddevelopment')
+    reddit_bot = WonderBot(login_file=LOGIN_FILE, \
+                           subreddit_name='arresteddevelopment')
 
-new_posts = reddit_bot.get_new_posts()
+    new_posts = reddit_bot.get_new_posts()
 
-for submission in new_posts:
-    title, submission.title
-    print("Text: ", submission.selftext)
+    comments = reddit_bot.get_comments_from_post(new_posts[0]['id'])
+
+
+
+    [x.author == "Test" for x in all_comments]
+
 
     
-    print("Score: ", submission.score)
-    print("---------------------------------\n")
-
-
-
