@@ -39,7 +39,9 @@ class WonderBot:
         reddit_object = praw.Reddit(client_id=login_info['client_id'],
                                     client_secret=login_info['secret'],
                                     redirect_uri='http://localhost:8080',
-                                    user_agent=self.bot_name)
+                                    user_agent=self.bot_name,
+                                    username=login_info['username'], 
+                                    password=login_info['password'])
         return reddit_object
 
     def get_subreddit_session(self, subreddit_name):
@@ -60,14 +62,7 @@ class WonderBot:
             Generator of new posts for subreddit
         '''
         newest_posts = self.subreddit.new(limit=self.new_post_limit)
-
-        posts = list()
-        for submission in newest_posts:
-            post_dict = {"text": submission.selftext, "title": submission.title, \
-                         "id": submission.id, "subreddit_id": submission.subreddit_id}
-            posts.append(post_dict)
-
-        return posts
+        return newest_posts
 
     def get_comments_from_post(self, post_id):
         '''Returns all comments from post.
@@ -82,20 +77,46 @@ class WonderBot:
 
 
 
+def process_submission(submission):
+    ''''''
+    if 'wonder' in submission.title.lower().split() + \
+                   submission.selftext.lower().split():
+        reply_text = 'Did somebody say... [Wonder?](http://imgur.com/a/wfYbY)'
+        print('Replying to: {}'.format(submission.title))
+        submission.reply(reply_text)
+
+
+
+
 if __name__ == '__main__':
 
     reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name='wondertest')
 
-    reddit_bot = WonderBot(login_file=LOGIN_FILE, \
-                           subreddit_name='arresteddevelopment')
 
-    new_posts = reddit_bot.get_new_posts()
-
-    comments = reddit_bot.get_comments_from_post(new_posts[0]['id'])
+    for post in reddit_bot.subreddit.stream.submissions():
+        process_submission(post)
 
 
 
-    [x.author == "Test" for x in all_comments]
 
 
-    
+# new_posts = reddit_bot.get_new_posts()
+
+
+
+# comments = reddit_bot.get_comments_from_post(new_posts[0]['id'])
+
+
+#         posts = list()
+#         for submission in newest_posts:
+#             post_dict = {"text": submission.selftext, "title": submission.title, \
+#                          "id": submission.id, "subreddit_id": submission.subreddit_id}
+#             posts.append(post_dict)
+
+
+
+
+
+# [x.author == "Test" for x in all_comments]
+
+
