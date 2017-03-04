@@ -1,8 +1,10 @@
 '''This script crawls a specified reddit and posts comments as the world
    renowned magician Tony Wonder'''
 
+import sys
 import json
 import praw
+from pprint import pprint
 
 LOGIN_FILE = 'login_info.json'
 
@@ -13,6 +15,8 @@ class WonderBot:
         self.new_post_limit = 10
         self.bot_name = 'Tony Wonder'
         self.bot_account = '__WonderBot__'
+        self.reply_text = 'Did somebody say... [Wonder?]' + \
+                          '(http://imgur.com/a/wfYbY)'
         self.reddit = self.get_reddit_session(login_file)
         self.subreddit = self.get_subreddit_session(subreddit_name)
 
@@ -76,27 +80,38 @@ class WonderBot:
         return all_comments
 
 
+    def process_submission(self, submission):
+        ''''''
+        if 'wonder' in submission.title.lower().split() + \
+                       submission.selftext.lower().split():
+            # print('Replying to: {}'.format(submission.title))
+            submission.reply(self.reply_text)
+            # flat_comments = praw.helpers.flatten_tree(submission.comments)
+            # print(flat_comments)
 
-def process_submission(submission):
-    ''''''
-    if 'wonder' in submission.title.lower().split() + \
-                   submission.selftext.lower().split():
-        reply_text = 'Did somebody say... [Wonder?](http://imgur.com/a/wfYbY)'
-        print('Replying to: {}'.format(submission.title))
-        submission.reply(reply_text)
-
+    @staticmethod
+    def process_comment(submission):
+        ''''''
+        print(submission.body)
+        print(submission.author)
 
 
 
 if __name__ == '__main__':
+    if len(sys.argv) == 2:
+        reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name='wondertest')
+        if str(sys.argv[1]) == 'comments':
+            print('comments')
+        elif str(sys.argv[1]) == 'submissions':
+            print('submissions')
+        else:
+            raise ValueError('Argument ' + str(sys.argv[1]) + ' not recognized')
+    else:
+        raise ValueError('Only 1 command line argument is supported')
 
-    reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name='wondertest')
 
-
-    for post in reddit_bot.subreddit.stream.submissions():
-        process_submission(post)
-
-
+    # for post in reddit_bot.subreddit.stream.submissions():
+    #     process_submission(post)
 
 
 
