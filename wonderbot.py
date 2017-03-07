@@ -2,6 +2,7 @@
    renowned magician Tony Wonder'''
 
 import sys
+import os
 import json
 import praw
 from pprint import pprint
@@ -15,10 +16,20 @@ class WonderBot:
         self.new_post_limit = 10
         self.bot_name = 'Tony Wonder'
         self.bot_account = '__WonderBot__'
+        self.keyword = 'wonder'
         self.reply_text = 'Did somebody say... [Wonder?]' + \
                           '(http://imgur.com/a/wfYbY)'
         self.reddit = self.get_reddit_session(login_file)
         self.subreddit = self.get_subreddit_session(subreddit_name)
+        self.comments_log_name = 'logs/comments_log.txt'
+        self.submissions_log_name = 'logs/submissions_log.txt'
+        self.create_logs_directory()
+
+    @staticmethod
+    def create_logs_directory(directory='logs'):
+        ''''''
+        if not os.path.exists(directory):
+            os.makedirs(directory)
 
     @staticmethod
     def read_json_from_file(file):
@@ -49,21 +60,21 @@ class WonderBot:
         return reddit_object
 
     def get_subreddit_session(self, subreddit_name):
-        '''Gets subreddit session
+        '''Gets subreddit session.
         Args:
-            subreddit_name (string): Name of subreddit
+            subreddit_name (string): Name of subreddit.
         Returns:
-            praw Subreddit object
+            praw Subreddit object.
         '''
         subreddit = self.reddit.subreddit(subreddit_name)
         return subreddit
 
     def get_new_posts(self):
-        '''Returns new posts for specified subreddit
+        '''Returns new posts for specified subreddit.
         Args:
             None
         Returns:
-            Generator of new posts for subreddit
+            Generator of new posts for subreddit.
         '''
         newest_posts = self.subreddit.new(limit=self.new_post_limit)
         return newest_posts
@@ -73,35 +84,67 @@ class WonderBot:
         Args:
             post_id (string): String of the post id.
         Returns:
-            list: Comments from post
+            list: Comments from post.
         '''
         post = self.reddit.submission(id=post_id)
         all_comments = post.comments.list()
         return all_comments
 
+    def submission_needs_reply(self, text):
+        '''Determines if given text has the keyword within.
+        Args:
+            text (list): Text of post or comment.
+        Returns:
+            logical: True if self.keyword is within the text.
+        '''
+        words_list = text.rstrip('?:!.,;').lower().split()
+        return self.keyword in words_list
 
-    def process_submission(self, submission):
+    # def process_submission(self, submission):
+    #     ''''''
+    #     if 'wonder' in submission.title.lower().split() + \
+    #                    submission.selftext.lower().split():
+    #         # print('Replying to: {}'.format(submission.title))
+    #         # submission.reply(self.reply_text)
+    #         flat_comments = praw.helpers.flatten_tree(submission.comments)
+    #         print(flat_comments)
+
+    def process_comment(self, comment):
         ''''''
-        if 'wonder' in submission.title.lower().split() + \
-                       submission.selftext.lower().split():
-            # print('Replying to: {}'.format(submission.title))
-            submission.reply(self.reply_text)
-            # flat_comments = praw.helpers.flatten_tree(submission.comments)
-            # print(flat_comments)
+        if comment.author != self.bot_account:
+            if self.submission_needs_reply(comment.body):
+                if not self.id_in_log(comment.id, self.comments_log_name):
+                    print('replying to' + comment.id)
+                    self.write_to_log(comment.id, self.comments_log_name)
+                    comment.reply(self.reply_text)
 
-    @staticmethod
-    def process_comment(submission):
+    def start_comment_stream(self):
         ''''''
-        print(submission.body)
-        print(submission.author)
+        for post in reddit_bot.subreddit.stream.comments():
+            self.process_comment(post)
 
+    def write_to_log(self, id, log_file_name):
+        ''''''
+        with open(log_file_name, 'a') as f:
+            f.write(id + '\n')
+
+    def id_in_log(self, id, log_file_name):
+        ids = self.read_log(log_file_name)
+        return id in ids
+
+    def read_log(self, log_file_name):
+        ''''''
+        with open(log_file_name, 'r') as f:
+            ids = f.read().split('\n')
+            non_empty_ids = list(filter(None, ids))
+        return non_empty_ids
 
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
         reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name='wondertest')
         if str(sys.argv[1]) == 'comments':
-            print('comments')
+            reddit_bot.start_comment_stream()
         elif str(sys.argv[1]) == 'submissions':
             print('submissions')
         else:
