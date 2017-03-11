@@ -23,10 +23,10 @@ class WonderBot:
         self.subreddit = self.get_subreddit_session(subreddit_name)
         self.comments_log_name = 'logs/comments_log.txt'
         self.submissions_log_name = 'logs/submissions_log.txt'
-        self.create_logs_directory()
+        self.initialize_logs()
 
     @staticmethod
-    def create_logs_directory(directory='logs'):
+    def initialize_logs(directory='logs'):
         ''''''
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -97,31 +97,39 @@ class WonderBot:
         Returns:
             logical: True if self.keyword is within the text.
         '''
-        words_list = text.rstrip('?:!.,;').lower().split()
+        punctuation = ('?',':','!','.',',',';')
+        stripped_string = ''.join(c for c in text if c not in punctuation)
+        words_list = stripped_string.lower().split()
         return self.keyword in words_list
-
-    # def process_submission(self, submission):
-    #     ''''''
-    #     if 'wonder' in submission.title.lower().split() + \
-    #                    submission.selftext.lower().split():
-    #         # print('Replying to: {}'.format(submission.title))
-    #         # submission.reply(self.reply_text)
-    #         flat_comments = praw.helpers.flatten_tree(submission.comments)
-    #         print(flat_comments)
 
     def process_comment(self, comment):
         ''''''
         if comment.author != self.bot_account:
             if self.submission_needs_reply(comment.body):
                 if not self.id_in_log(comment.id, self.comments_log_name):
-                    print('replying to' + comment.id)
+                    print('Replying to ' + comment.id)
                     self.write_to_log(comment.id, self.comments_log_name)
                     comment.reply(self.reply_text)
+
+    def process_submission(self, submission):
+        ''''''
+        if submission.author != self.bot_account:
+            all_text = submission.selftext + ' ' + submission.title
+            if self.submission_needs_reply(all_text):
+                if not self.id_in_log(submission.id, self.submissions_log_name):
+                    print('Replying to ' + submission.id)
+                    self.write_to_log(submission.id, self.submissions_log_name)
+                    submission.reply(self.reply_text)
 
     def start_comment_stream(self):
         ''''''
         for post in reddit_bot.subreddit.stream.comments():
             self.process_comment(post)
+
+    def start_submission_stream(self):
+        ''''''
+        for submission in reddit_bot.subreddit.stream.submissions():
+            self.process_submission(submission)
 
     def write_to_log(self, id, log_file_name):
         ''''''
@@ -129,8 +137,12 @@ class WonderBot:
             f.write(id + '\n')
 
     def id_in_log(self, id, log_file_name):
-        ids = self.read_log(log_file_name)
-        return id in ids
+        ''''''
+        try:
+            ids = self.read_log(log_file_name)
+            return id in ids
+        except FileNotFoundError:
+            return False
 
     def read_log(self, log_file_name):
         ''''''
@@ -146,35 +158,9 @@ if __name__ == '__main__':
         if str(sys.argv[1]) == 'comments':
             reddit_bot.start_comment_stream()
         elif str(sys.argv[1]) == 'submissions':
-            print('submissions')
+            reddit_bot.start_submission_stream()
         else:
             raise ValueError('Argument ' + str(sys.argv[1]) + ' not recognized')
     else:
         raise ValueError('Only 1 command line argument is supported')
-
-
-    # for post in reddit_bot.subreddit.stream.submissions():
-    #     process_submission(post)
-
-
-
-# new_posts = reddit_bot.get_new_posts()
-
-
-
-# comments = reddit_bot.get_comments_from_post(new_posts[0]['id'])
-
-
-#         posts = list()
-#         for submission in newest_posts:
-#             post_dict = {"text": submission.selftext, "title": submission.title, \
-#                          "id": submission.id, "subreddit_id": submission.subreddit_id}
-#             posts.append(post_dict)
-
-
-
-
-
-# [x.author == "Test" for x in all_comments]
-
 
