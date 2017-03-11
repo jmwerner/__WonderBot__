@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir logs
+mkdir -p logs
 
 nohup python wonderbot.py comments > logs/comments_nohup.out 2> logs/comments_nohup.err &
 
