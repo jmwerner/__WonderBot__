@@ -133,8 +133,8 @@ class WonderBot:
             None
         '''
         if submission.author != self.bot_account:
-            all_text = submission.selftext + ' ' + submission.title
-            if self.submission_needs_reply(all_text):
+            if self.submission_needs_reply(submission.selftext) or \
+               self.submission_needs_reply(submission.title):
                 if not self.id_in_log(submission.id, self.submissions_log_name):
                     print('Replying to ' + submission.id)
                     self.write_to_log(submission.id, self.submissions_log_name)

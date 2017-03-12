@@ -2,9 +2,9 @@
 
 mkdir -p logs
 
-python wonderbot.py comments > logs/comments_nohup.out
+python wonderbot.py comments
 
 sleep 30
 
-python wonderbot.py submissions > logs/submissions_nohup.out
+python wonderbot.py submissions
 
