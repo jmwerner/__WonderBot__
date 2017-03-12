@@ -7,8 +7,6 @@ import json
 import praw
 import time
 
-LOGIN_FILE = 'login_info.json'
-
 
 class WonderBot:
     '''This is the reddit bot class for handling all interaction with the web'''
@@ -182,11 +180,13 @@ class WonderBot:
         return non_empty_ids
 
 
-def main(LOGIN_FILE, subreddit_name):
-    reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name=subreddit_name)
+def main():
+    LOGIN_FILE = 'login_info.json'
+    SUBREDDIT_NAME = 'wondertest'
+    reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name=SUBREDDIT_NAME)
     reddit_bot.start_comment_batch()
     time.sleep(25)
     reddit_bot.start_submission_batch()
 
 if __name__ == '__main__':
-    main(LOGIN_FILE, 'wondertest')
+    main()
