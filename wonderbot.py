@@ -5,6 +5,7 @@ import sys
 import os
 import json
 import praw
+import time
 
 LOGIN_FILE = 'login_info.json'
 
@@ -182,14 +183,7 @@ class WonderBot:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name='wondertest')
-        if str(sys.argv[1]) == 'comments':
-            reddit_bot.start_comment_batch()
-        elif str(sys.argv[1]) == 'submissions':
-            reddit_bot.start_submission_batch()
-        else:
-            raise ValueError('Argument ' + str(sys.argv[1]) + ' not recognized')
-    else:
-        raise ValueError('Only 1 command line argument is supported')
-
+    reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name='wondertest')
+    reddit_bot.start_comment_batch()
+    time.sleep(25)
+    reddit_bot.start_submission_batch()
