@@ -141,12 +141,12 @@ class WonderBot:
                     self.write_to_log(submission.id, self.submissions_log_name)
                     submission.reply(self.reply_text)
 
-    def start_comment_stream(self):
+    def start_comment_stream(self, reddit_bot):
         '''Depreciated, host disconnects after a few hours'''
         for post in reddit_bot.subreddit.stream.comments():
             self.process_comment(post)
 
-    def start_submission_stream(self):
+    def start_submission_stream(self, reddit_bot):
         '''Depreciated, host disconnects after a few hours'''
         for submission in reddit_bot.subreddit.stream.submissions():
             self.process_submission(submission)
@@ -182,8 +182,11 @@ class WonderBot:
         return non_empty_ids
 
 
-if __name__ == '__main__':
-    reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name='wondertest')
+def main(LOGIN_FILE, subreddit_name):
+    reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name=subreddit_name)
     reddit_bot.start_comment_batch()
     time.sleep(25)
     reddit_bot.start_submission_batch()
+
+if __name__ == '__main__':
+    main(LOGIN_FILE, 'wondertest')
