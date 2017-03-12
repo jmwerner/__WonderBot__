@@ -182,7 +182,7 @@ class WonderBot:
 
 def main():
     LOGIN_FILE = 'login_info.json'
-    SUBREDDIT_NAME = 'wondertest'
+    SUBREDDIT_NAME = 'arresteddevelopment'
     reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name=SUBREDDIT_NAME)
     reddit_bot.start_comment_batch()
     time.sleep(25)
