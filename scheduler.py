@@ -1,6 +1,4 @@
 
-from apscheduler.schedulers.background import BackgroundScheduler
-
 from wonderbot import main
 
 if __name__ == '__main__':
