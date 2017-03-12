@@ -12,7 +12,7 @@ LOGIN_FILE = 'login_info.json'
 class WonderBot:
     '''This is the reddit bot class for handling all interaction with the web'''
     def __init__(self, login_file, subreddit_name):
-        self.new_item_limit = 30
+        self.new_item_limit = 10
         self.bot_name = 'Tony Wonder'
         self.bot_account = '__WonderBot__'
         self.keyword = 'wonder'
@@ -141,12 +141,12 @@ class WonderBot:
                     submission.reply(self.reply_text)
 
     def start_comment_stream(self):
-        '''Depreciated'''
+        '''Depreciated, host disconnects after a few hours'''
         for post in reddit_bot.subreddit.stream.comments():
             self.process_comment(post)
 
     def start_submission_stream(self):
-        '''Depreciated'''
+        '''Depreciated, host disconnects after a few hours'''
         for submission in reddit_bot.subreddit.stream.submissions():
             self.process_submission(submission)
 
