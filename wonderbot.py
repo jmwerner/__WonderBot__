@@ -105,7 +105,7 @@ class WonderBot:
         Returns:
             logical: True if self.keyword is within the text.
         '''
-        punctuation = ('?', ':', '!', '.', ',', ';')
+        punctuation = ('?', ':', '!', '.', ',', ';', '\'', '\"')
         stripped_string = ''.join(c for c in text if c not in punctuation)
         words_list = stripped_string.lower().split()
         return self.keyword in words_list
