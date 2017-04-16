@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python scheduler.py
+python3 scheduler.py

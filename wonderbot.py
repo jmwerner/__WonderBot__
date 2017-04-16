@@ -185,7 +185,7 @@ def main():
     SUBREDDIT_NAME = 'arresteddevelopment'
     reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name=SUBREDDIT_NAME)
     reddit_bot.start_comment_batch()
-    time.sleep(25)
+    time.sleep(60)
     reddit_bot.start_submission_batch()
 
 if __name__ == '__main__':
