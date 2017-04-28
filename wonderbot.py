@@ -11,13 +11,14 @@ import time
 class WonderBot:
     '''This is the reddit bot class for handling all interaction with the web'''
     def __init__(self, login_file, subreddit_name):
+        self.login_file = login_file
         self.new_item_limit = 10
         self.bot_name = 'Tony Wonder'
         self.bot_account = '__WonderBot__'
         self.keyword = 'wonder'
         self.reply_text = 'Did somebody say... [Wonder?]' + \
                           '(http://imgur.com/a/wfYbY)'
-        self.reddit = self.get_reddit_session(login_file)
+        self.reddit = self.get_reddit_session()
         self.subreddit = self.get_subreddit_session(subreddit_name)
         self.comments_log_name = 'logs/comments_log.txt'
         self.submissions_log_name = 'logs/submissions_log.txt'
@@ -41,14 +42,12 @@ class WonderBot:
             login_info = json.load(data_file)
         return login_info
 
-    def get_reddit_session(self, file):
+    def get_reddit_session(self):
         '''Authenticates and starts a praw.reddit.Reddit object
-        Args:
-            file (string): Path to file of authentication json
         Returns:
             praw.reddit.Reddit: Authenticated object
         '''
-        login_info = self.read_json_from_file(file)
+        login_info = self.get_login_info()
         reddit_object = praw.Reddit(client_id=login_info['client_id'],
                                     client_secret=login_info['secret'],
                                     redirect_uri='http://localhost:8080',
@@ -56,6 +55,15 @@ class WonderBot:
                                     username=login_info['username'], 
                                     password=login_info['password'])
         return reddit_object
+
+    def get_login_info(self):
+        if os.path.isfile(self.login_file):
+            return self.read_json_from_file(self.login_file)
+        else:
+            return {"client_id":os.environ["LOGIN_INFO_CLIENT_ID"],
+                    "secret":os.environ["LOGIN_INFO_SECRET"],
+                    "username":os.environ["LOGIN_INFO_USERNAME"],
+                    "password":os.environ["LOGIN_INFO_PASSWORD"]}
 
     def get_subreddit_session(self, subreddit_name):
         '''Gets subreddit session.
