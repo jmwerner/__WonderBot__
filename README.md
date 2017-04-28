@@ -1,5 +1,7 @@
 # __WonderBot__
 
+[![Build Status](https://travis-ci.org/jmwerner/__WonderBot__.svg?branch=master)](https://travis-ci.org/jmwerner/__WonderBot__)
+
 ## Did somebody say... Wonder?
 ![](img/wonder.jpg)
 
