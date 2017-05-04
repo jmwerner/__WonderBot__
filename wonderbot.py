@@ -1,11 +1,10 @@
 '''This script crawls a specified reddit and posts comments as the world
    renowned magician Tony Wonder'''
 
-import sys
 import os
 import json
-import praw
 import time
+import praw
 
 
 class WonderBot:
@@ -26,7 +25,7 @@ class WonderBot:
 
     @staticmethod
     def initialize_logs(directory='logs'):
-        ''''''
+        '''Initializes empty directory for log storing if it doesn't exist'''
         if not os.path.exists(directory):
             os.makedirs(directory)
 
@@ -52,11 +51,15 @@ class WonderBot:
                                     client_secret=login_info['secret'],
                                     redirect_uri='http://localhost:8080',
                                     user_agent=self.bot_name,
-                                    username=login_info['username'], 
+                                    username=login_info['username'],
                                     password=login_info['password'])
         return reddit_object
 
     def get_login_info(self):
+        '''Gets login info from login_file
+        Returns:
+            dict: secret info needed for praw login and reddit posting
+        '''
         if os.path.isfile(self.login_file):
             return self.read_json_from_file(self.login_file)
         else:
@@ -147,51 +150,61 @@ class WonderBot:
                     self.write_to_log(submission.id, self.submissions_log_name)
                     submission.reply(self.reply_text)
 
-    def start_comment_stream(self, reddit_bot):
-        '''Depreciated, host disconnects after a few hours'''
-        for post in reddit_bot.subreddit.stream.comments():
-            self.process_comment(post)
-
-    def start_submission_stream(self, reddit_bot):
-        '''Depreciated, host disconnects after a few hours'''
-        for submission in reddit_bot.subreddit.stream.submissions():
-            self.process_submission(submission)
-
     def start_comment_batch(self):
-        ''''''
+        '''Processes and handles pre-set number of new comments'''
         for post in self.get_new_comments():
             self.process_comment(post)
 
     def start_submission_batch(self):
-        ''''''
+        '''Processes and handles pre-set number of new posts'''
         for submission in self.get_new_posts():
             self.process_submission(submission)
 
-    def write_to_log(self, id, log_file_name):
-        ''''''
-        with open(log_file_name, 'a') as f:
-            f.write(id + '\n')
+    @staticmethod
+    def write_to_log(id_input, log_file_name):
+        '''Writes given id to specified log file
+        Args:
+            id_input: id of post or comment
+            log_file_name: file name of log to append
+        Returns:
+            None
+        '''
+        with open(log_file_name, 'a') as file:
+            file.write(id_input + '\n')
 
-    def id_in_log(self, id, log_file_name):
-        ''''''
+    def id_in_log(self, id_input, log_file_name):
+        '''Checks for given id in log
+        Args:
+            id_input: id of post or comment
+            log_file_name: file name of log to read and check
+        Returns:
+            logical: True if id is already in log of ids, False otherwise
+        '''
         try:
             ids = self.read_log(log_file_name)
-            return id in ids
+            return id_input in ids
         except FileNotFoundError:
             return False
 
-    def read_log(self, log_file_name):
-        ''''''
-        with open(log_file_name, 'r') as f:
-            ids = f.read().split('\n')
+    @staticmethod
+    def read_log(log_file_name):
+        '''Reads log from file
+        Args:
+            log_file_name: file name of log to read
+        Returns:
+            list: Non-empty ids as strings retrieved from the log
+        '''
+        with open(log_file_name, 'r') as file:
+            ids = file.read().split('\n')
             non_empty_ids = list(filter(None, ids))
         return non_empty_ids
 
 
 def main():
-    LOGIN_FILE = 'login_info.json'
-    SUBREDDIT_NAME = 'arresteddevelopment'
-    reddit_bot = WonderBot(login_file=LOGIN_FILE, subreddit_name=SUBREDDIT_NAME)
+    '''Main function that drives the comment and submission handling'''
+    login_file = 'login_info.json'
+    subreddit_name = 'arresteddevelopment'
+    reddit_bot = WonderBot(login_file=login_file, subreddit_name=subreddit_name)
     reddit_bot.start_comment_batch()
     time.sleep(60)
     reddit_bot.start_submission_batch()
