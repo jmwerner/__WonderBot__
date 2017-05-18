@@ -16,7 +16,7 @@ class WonderBot:
         self.bot_account = '__WonderBot__'
         self.keyword = 'wonder'
         self.reply_text = 'Did somebody say... [Wonder?]' + \
-                          '(http://imgur.com/a/wfYbY)'
+                          '(http://i.imgur.com/figfAON.jpg)'
         self.reddit = self.get_reddit_session()
         self.subreddit = self.get_subreddit_session(subreddit_name)
         self.comments_log_name = 'logs/comments_log.txt'
