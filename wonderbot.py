@@ -118,7 +118,7 @@ class WonderBot:
         '''
         punctuation = ('?', ':', '!', '.', ',', ';', '\'', '\"')
         stripped_string = ''.join(c for c in text if c not in punctuation)
-        words_list = stripped_string.lower().split()
+        words_list = stripped_string.lower().replace('*', '').replace('~~', '').split()
         return self.keyword in words_list
 
     def process_comment(self, comment):
