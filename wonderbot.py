@@ -5,6 +5,7 @@ import os
 import json
 import time
 import praw
+import re
 
 
 class WonderBot:
@@ -118,7 +119,12 @@ class WonderBot:
         '''
         punctuation = ('?', ':', '!', '.', ',', ';', '\'', '\"')
         stripped_string = ''.join(c for c in text if c not in punctuation)
+        # Remove markdown characters
         words_list = stripped_string.lower().replace('*', '').replace('~~', '').split()
+        # Remove mr from the front of a word split
+        words_list = [re.sub(r'^{0}'.format(re.escape('mr')), '', x) for x in words_list]
+        # Remove s from the end of a word split
+        words_list = [re.sub(r's$', '', x) for x in words_list]
         return self.keyword in words_list
 
     def process_comment(self, comment):
