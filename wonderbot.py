@@ -134,12 +134,14 @@ class WonderBot:
         Returns:
             None
         '''
-        if comment.author != self.bot_account:
-            if self.submission_needs_reply(comment.body):
-                if not self.id_in_log(comment.id, self.comments_log_name):
-                    print('Replying to ' + comment.id)
-                    self.write_to_log(comment.id, self.comments_log_name)
-                    comment.reply(self.reply_text)
+        # Time hotfix
+        if comment.created_utc > 1515735594.0:
+            if comment.author != self.bot_account:
+                if self.submission_needs_reply(comment.body):
+                    if not self.id_in_log(comment.id, self.comments_log_name):
+                        print('Replying to ' + comment.id)
+                        self.write_to_log(comment.id, self.comments_log_name)
+                        comment.reply(self.reply_text)
 
     def process_submission(self, submission):
         '''Processes and replies to a given submission if appropriate.
@@ -148,13 +150,15 @@ class WonderBot:
         Returns:
             None
         '''
-        if submission.author != self.bot_account:
-            if self.submission_needs_reply(submission.selftext) or \
-               self.submission_needs_reply(submission.title):
-                if not self.id_in_log(submission.id, self.submissions_log_name):
-                    print('Replying to ' + submission.id)
-                    self.write_to_log(submission.id, self.submissions_log_name)
-                    submission.reply(self.reply_text)
+        # Time hotfix
+        if submission.created_utc > 1515735594.0:
+            if submission.author != self.bot_account:
+                if self.submission_needs_reply(submission.selftext) or \
+                   self.submission_needs_reply(submission.title):
+                    if not self.id_in_log(submission.id, self.submissions_log_name):
+                        print('Replying to ' + submission.id)
+                        self.write_to_log(submission.id, self.submissions_log_name)
+                        submission.reply(self.reply_text)
 
     def start_comment_batch(self):
         '''Processes and handles pre-set number of new comments'''
