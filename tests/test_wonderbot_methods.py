@@ -1,6 +1,3 @@
-'''This script crawls a specified reddit and posts comments as the world
-   renowned magician Tony Wonder'''
-
 import sys
 import os
 import json
