@@ -141,6 +141,7 @@ class WonderBot:
                     if not self.id_in_log(comment.id, self.comments_log_name):
                         print('Replying to ' + comment.id)
                         self.write_to_log(comment.id, self.comments_log_name)
+                        comment.upvote()
                         comment.reply(self.reply_text)
 
     def process_submission(self, submission):
@@ -158,6 +159,7 @@ class WonderBot:
                     if not self.id_in_log(submission.id, self.submissions_log_name):
                         print('Replying to ' + submission.id)
                         self.write_to_log(submission.id, self.submissions_log_name)
+                        submission.upvote()
                         submission.reply(self.reply_text)
 
     def start_comment_batch(self):
