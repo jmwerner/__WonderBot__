@@ -2,10 +2,10 @@
 
 [![Build Status](https://travis-ci.org/jmwerner/__WonderBot__.svg?branch=master)](https://travis-ci.org/jmwerner/__WonderBot__)
 
-## Did somebody say... Wonder?
-![](img/wonder.jpg)
+## WonderBot was banned... RIP
+![](img/rip.png)
 
-#### Currently crawling
+#### Previously crawling
 * r/arresteddevelopment
 
 ##### Help keep the magic going
